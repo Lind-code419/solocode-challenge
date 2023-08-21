@@ -1,7 +1,7 @@
 import express from "express";
 
 // use the SQL methods in the API routes below
-import {joinQueue} from './taxi.sql.js';
+import {joinQueue, leaveQueue, joinTaxiQueue, taxiDepart,taxiQueueLength, queueLength} from './taxi.sql.js';
 
 const app = express();
 
@@ -14,26 +14,34 @@ const PORT = process.env.PORT || 4015;
 
 // passenger joins the queue
 app.post('/api/passenger/join', (req, res) => {
+    joinQueue();
     res.json({
         message : 'join queue'
+
     })
 })
 
 // passenger leaves the queue
 app.post('/api/passenger/leave', (req, res) => {
+    leaveQueue();
     res.json({
         message : 'leave queue'
     })
 });
 
+// taxi joins the queue
+
 app.post('/api/taxi/join', (req, res) => {
+    joinTaxiQueue();
     res.json({
-        message : 'leave queue'
+        message : 'taxi join queue'
     })
 });
 
 // Note there needs to be at least 12 people in the queue for the taxi to depart
 app.post('/api/taxi/depart', (req, res) => {
+    
+    taxiDepart();
     res.json({
         message : 'taxi depart from queue'
     })
@@ -44,14 +52,15 @@ app.post('/api/taxi/depart', (req, res) => {
 app.get('/api/passenger/queue', (req, res) => {
     //  return test the API call
     res.json({
-        queueCount : 7
+        queueCount : queueLength()
     })
 });
 
 // return the number of taxis in the queue
 app.get('/api/taxi/queue', (req, res) => {
+    
     res.json({
-        queueCount : 0
+        queueCountTaxi : taxiQueueLength()
     })
 });
 
